@@ -78,7 +78,7 @@
     ],
     "elbBEAddressPoolProperties": [
       {
-        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('elbName'), variables('elbBEAddressPoolName'))]"
+        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('elbBEAddressPoolName'))]"
       }
     ]
   },
