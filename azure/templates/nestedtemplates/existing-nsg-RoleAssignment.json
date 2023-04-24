@@ -11,10 +11,16 @@
       "defaultValue": "[concat(resourceGroup().name, '-vnet')]"
     },
     "roleDefinitionId": {
-      "type": "string"
+      "type": "string",
       "defaultValue": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    },
+    "principalId1": {
+      "type": "string"
+    },
+    "principalId2": {
+      "type": "string"
     }
-  }
+  },
   "resources": [
     {
       "type": "Microsoft.Authorization/roleAssignments",
@@ -23,7 +29,7 @@
       "name": "[guid(resourceGroup().id, concat(parameters('vmName'), '1', '-nsg'))]",
       "properties": {
         "roleDefinitionId": "[parameters('roleDefinitionId')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), '1')), '2021-07-01', 'Full').identity.principalId]"
+        "principalId": "[parameters('principalId1')]"
       }
     },
     {
@@ -33,7 +39,7 @@
       "name": "[guid(resourceGroup().id, concat(parameters('vmName'), '2', '-nsg'))]",
       "properties": {
         "roleDefinitionId": "[parameters('roleDefinitionId')]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), '2')), '2021-07-01', 'Full').identity.principalId]"
+        "principalId": "[parameters('principalId2')]"
       }
     }
   ]
