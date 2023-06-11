@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploys a Check Point Security Gateway into a new VPC (20211212)
+Description: Deploys a Check Point Security Gateway into a new VPC (20230503)
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -29,6 +29,10 @@ Metadata:
           - Shell
           - GatewaySICKey
           - GatewayPasswordHash
+      - Label:
+          default: Quick connect to Smart-1 Cloud (Recommended)
+        Parameters:
+          - GatewayToken
       - Label:
           default: Advanced Settings
         Parameters:
@@ -78,6 +82,8 @@ Metadata:
         default: Admin shell
       GatewaySICKey:
         default: Gateway SIC key
+      GatewayToken:
+        default: Smart-1 Cloud Token
       GatewayPasswordHash:
         default: Gateway Password hash
       ResourcesTagName:
@@ -134,7 +140,9 @@ Parameters:
       - c5.2xlarge
       - c5.4xlarge
       - c5.9xlarge
+      - c5.12xlarge
       - c5.18xlarge
+      - c5.24xlarge
       - c5n.large
       - c5n.xlarge
       - c5n.2xlarge
@@ -147,48 +155,86 @@ Parameters:
       - m5.4xlarge
       - m5.8xlarge
       - m5.12xlarge
+      - m5.16xlarge
+      - m5.24xlarge
       - m6i.large
       - m6i.xlarge
       - m6i.2xlarge
       - m6i.4xlarge
+      - m6i.8xlarge
       - m6i.12xlarge
+      - m6i.16xlarge
       - m6i.24xlarge
+      - m6i.32xlarge
       - c6i.large
       - c6i.xlarge
       - c6i.2xlarge
       - c6i.4xlarge
+      - c6i.8xlarge
       - c6i.12xlarge
+      - c6i.16xlarge
       - c6i.24xlarge
+      - c6i.32xlarge
+      - c6in.large
+      - c6in.xlarge
+      - c6in.2xlarge
+      - c6in.4xlarge
+      - c6in.8xlarge
+      - c6in.12xlarge
+      - c6in.16xlarge
+      - c6in.24xlarge
+      - c6in.32xlarge
       - r5.large
       - r5.xlarge
       - r5.2xlarge
       - r5.4xlarge
+      - r5.8xlarge
       - r5.12xlarge
+      - r5.16xlarge
       - r5.24xlarge
       - r5a.large
       - r5a.xlarge
       - r5a.2xlarge
       - r5a.4xlarge
+      - r5a.8xlarge
       - r5a.12xlarge
+      - r5a.16xlarge
       - r5a.24xlarge
       - r5b.large
       - r5b.xlarge
       - r5b.2xlarge
       - r5b.4xlarge
+      - r5b.8xlarge
       - r5b.12xlarge
+      - r5b.16xlarge
       - r5b.24xlarge
       - r5n.large
       - r5n.xlarge
       - r5n.2xlarge
       - r5n.4xlarge
+      - r5n.8xlarge
       - r5n.12xlarge
+      - r5n.16xlarge
       - r5n.24xlarge
+      - r6i.large
+      - r6i.xlarge
+      - r6i.2xlarge
+      - r6i.4xlarge
+      - r6i.8xlarge
+      - r6i.12xlarge
+      - r6i.16xlarge
+      - r6i.24xlarge
+      - r6i.32xlarge
       - m6a.large
       - m6a.xlarge
       - m6a.2xlarge
       - m6a.4xlarge
+      - m6a.8xlarge
       - m6a.12xlarge
+      - m6a.16xlarge
       - m6a.24xlarge
+      - m6a.32xlarge
+      - m6a.48xlarge
     ConstraintDescription: Must be a valid EC2 instance type
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instance.
@@ -262,6 +308,11 @@ Parameters:
     Type: String
     AllowedPattern: '[a-zA-Z0-9]{8,}'
     NoEcho: true
+  GatewayToken:
+    Description: Follow the instructions in sk180501 to quickly connect this Gateway to Smart-1 Cloud. Paste here the token copied from the Connect Gateway screen in Smart-1 Cloud portal.
+    AllowedPattern: '(^aHR0cHM6Ly9(.+)|(.*)\s[aHR0cHM6Ly9](.+)|^$)'
+    Type: String
+    NoEcho: true
   GatewayPasswordHash:
     Description: Admin user's password hash (use command "openssl passwd -6 PASSWORD"
       to get the PASSWORD's hash). (optional)
@@ -274,7 +325,7 @@ Parameters:
     Type: String
     Default: ''
   GatewayHostname:
-    Description: (optional)
+    Description: The name must not contain reserved words. For details, refer to sk40179 (optional).
     Type: String
     Default: ''
     AllowedPattern: '^([A-Za-z]([-0-9A-Za-z]{0,61}[0-9A-Za-z])?|)$'
@@ -377,6 +428,7 @@ Resources:
         GatewayVersion: !Ref GatewayVersion
         Shell: !Ref Shell
         GatewaySICKey: !Ref GatewaySICKey
+        GatewayToken: !Ref GatewayToken
         GatewayPasswordHash: !Ref GatewayPasswordHash
         ResourcesTagName: !Ref ResourcesTagName
         GatewayHostname: !Ref GatewayHostname

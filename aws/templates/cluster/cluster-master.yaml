@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploy a Check Point Cluster in a new VPC (20211212)
+Description: Deploy a Check Point Cluster in a new VPC (20230503)
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -30,6 +30,11 @@ Metadata:
           - Shell
           - GatewayPasswordHash
           - GatewaySICKey
+      - Label:
+          default: Quick connect to Smart-1 Cloud (Recommended)
+        Parameters:
+          - MemberAToken
+          - MemberBToken
       - Label:
           default: Advanced Settings
         Parameters:
@@ -77,6 +82,10 @@ Metadata:
         default: Password hash
       GatewaySICKey:
         default: SIC key
+      MemberAToken:
+        default: Smart-1 Cloud Token for member A
+      MemberBToken:
+        default: Smart-1 Cloud Token for member B
       ResourcesTagName:
         default: Resources prefix tag
       GatewayHostname:
@@ -130,7 +139,9 @@ Parameters:
       - c5.2xlarge
       - c5.4xlarge
       - c5.9xlarge
+      - c5.12xlarge
       - c5.18xlarge
+      - c5.24xlarge
       - c5n.large
       - c5n.xlarge
       - c5n.2xlarge
@@ -143,48 +154,86 @@ Parameters:
       - m5.4xlarge
       - m5.8xlarge
       - m5.12xlarge
+      - m5.16xlarge
+      - m5.24xlarge
       - m6i.large
       - m6i.xlarge
       - m6i.2xlarge
       - m6i.4xlarge
+      - m6i.8xlarge
       - m6i.12xlarge
+      - m6i.16xlarge
       - m6i.24xlarge
+      - m6i.32xlarge
       - c6i.large
       - c6i.xlarge
       - c6i.2xlarge
       - c6i.4xlarge
+      - c6i.8xlarge
       - c6i.12xlarge
+      - c6i.16xlarge
       - c6i.24xlarge
+      - c6i.32xlarge
+      - c6in.large
+      - c6in.xlarge
+      - c6in.2xlarge
+      - c6in.4xlarge
+      - c6in.8xlarge
+      - c6in.12xlarge
+      - c6in.16xlarge
+      - c6in.24xlarge
+      - c6in.32xlarge
       - r5.large
       - r5.xlarge
       - r5.2xlarge
       - r5.4xlarge
+      - r5.8xlarge
       - r5.12xlarge
+      - r5.16xlarge
       - r5.24xlarge
       - r5a.large
       - r5a.xlarge
       - r5a.2xlarge
       - r5a.4xlarge
+      - r5a.8xlarge
       - r5a.12xlarge
+      - r5a.16xlarge
       - r5a.24xlarge
       - r5b.large
       - r5b.xlarge
       - r5b.2xlarge
       - r5b.4xlarge
+      - r5b.8xlarge
       - r5b.12xlarge
+      - r5b.16xlarge
       - r5b.24xlarge
       - r5n.large
       - r5n.xlarge
       - r5n.2xlarge
       - r5n.4xlarge
+      - r5n.8xlarge
       - r5n.12xlarge
+      - r5n.16xlarge
       - r5n.24xlarge
+      - r6i.large
+      - r6i.xlarge
+      - r6i.2xlarge
+      - r6i.4xlarge
+      - r6i.8xlarge
+      - r6i.12xlarge
+      - r6i.16xlarge
+      - r6i.24xlarge
+      - r6i.32xlarge
       - m6a.large
       - m6a.xlarge
       - m6a.2xlarge
       - m6a.4xlarge
+      - m6a.8xlarge
       - m6a.12xlarge
+      - m6a.16xlarge
       - m6a.24xlarge
+      - m6a.32xlarge
+      - m6a.48xlarge
     ConstraintDescription: must be a valid EC2 instance type.
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instance.
@@ -270,12 +319,22 @@ Parameters:
     AllowedPattern: '^[a-zA-Z0-9]{8,}$'
     ConstraintDescription: At least 8 alpha numeric characters.
     NoEcho: true
+  MemberAToken:
+    Description: Follow the instructions in sk180501 to quickly connect this Single AZ Cluster to Smart-1 Cloud. Paste here the token copied from the Connect Gateway screen in Smart-1 Cloud portal.
+    AllowedPattern: '(^aHR0cHM6Ly9(.+)|(.*)\s[aHR0cHM6Ly9](.+)|^$)'
+    Type: String
+    NoEcho: true
+  MemberBToken:
+    Description: Follow the instructions in sk180501 to quickly connect this Single AZ Cluster to Smart-1 Cloud. Paste here the token copied from the Connect Gateway screen in Smart-1 Cloud portal.
+    AllowedPattern: '(^aHR0cHM6Ly9(.+)|(.*)\s[aHR0cHM6Ly9](.+)|^$)'
+    Type: String
+    NoEcho: true
   ResourcesTagName:
     Description: Name tag prefix of the resources (optional).
     Type: String
     Default: ''
   GatewayHostname:
-    Description: The host name will be appended with member-a/b accordingly. (optional)
+    Description: The host name will be appended with member-a/b accordingly (optional). The name must not contain reserved words. For details, refer to sk40179.
     Type: String
     Default: ''
     AllowedPattern: '^([A-Za-z]([-0-9A-Za-z]{0,61}[0-9A-Za-z]))?$'
@@ -354,6 +413,8 @@ Resources:
         Shell: !Ref Shell
         GatewayPasswordHash: !Ref GatewayPasswordHash
         GatewaySICKey: !Ref GatewaySICKey
+        MemberAToken: !Ref MemberAToken
+        MemberBToken: !Ref MemberBToken
         ResourcesTagName: !Ref ResourcesTagName
         GatewayHostname: !Ref GatewayHostname
         AllowUploadDownload: !Ref AllowUploadDownload
@@ -389,3 +450,21 @@ Outputs:
     Condition: AllocateAddress
     Description: URL to the member B portal.
     Value: !GetAtt ClusterStack.Outputs.MemberBURL
+Rules:
+  MemberATokenNotProvided:
+    RuleCondition: !Equals [!Ref MemberAToken, '']
+    Assertions:
+      - AssertDescription: "Smart-1 Cloud Token for member A can not be empty."
+        Assert: !Equals [!Ref MemberBToken, '']
+  MemberBTokenNotProvided:
+    RuleCondition: !Equals [ !Ref MemberBToken, '' ]
+    Assertions:
+      - AssertDescription: "Smart-1 Cloud Token for member B can not be empty."
+        Assert: !Equals [ !Ref MemberAToken, '' ]
+  MembersTokenValueEquals:
+    RuleCondition: !EachMemberEquals [ [ !Ref MemberBToken ], !Ref MemberAToken ]
+    Assertions:
+      - AssertDescription: "The same Smart-1 Cloud token is used for the two Cluster members. Each Cluster member must have a unique token"
+        Assert: !Equals [ !Ref MemberAToken, '' ]
+      - AssertDescription: "The same Smart-1 Cloud token is used for the two Cluster members. Each Cluster member must have a unique token"
+        Assert: !Equals [ !Ref MemberBToken, '' ]

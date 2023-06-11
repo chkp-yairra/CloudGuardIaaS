@@ -5,7 +5,7 @@ vpc_id = "vpc-12345678"
 gateways_subnets = ["subnet-123b5678", "subnet-123a4567"]
 
 // --- General Settings ---
-key_name = "privatekey"
+key_name = "publickey"
 enable_volume_encryption = true
 enable_instance_connect = false
 disable_instance_termination = false
@@ -17,10 +17,10 @@ gateway_instance_type = "c5.xlarge"
 gateways_min_group_size = 2
 gateways_max_group_size = 8
 gateway_version = "R81.10-BYOL"
-gateway_password_hash = "12345678"
-gateway_SICKey = ""
+gateway_password_hash = ""
+gateway_SICKey = "12345678"
 enable_cloudwatch = true
-asn = "6500"
+asn = "65000"
 
 // --- Check Point CloudGuard Network Security Management Server Configuration ---
 management_deploy = true
