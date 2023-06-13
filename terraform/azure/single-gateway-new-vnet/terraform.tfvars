@@ -25,4 +25,4 @@ allow_upload_download           = "PLEASE ENTER true or false"                  
 authentication_type             = "PLEASE ENTER AUTHENTICATION TYPE"                               # "Password"
 enable_custom_metrics           = "PLEASE ENTER true or false"                                     # true
 admin_shell                     = "PLEASE ENTER ADMIN SHELL"                                       # "/etc/cli.sh"
-installation_type               = "PLEASE ENTER INSTALLATION TYPE"					# "gateway"
+installation_type               = "PLEASE ENTER INSTALLATION TYPE"		# "gateway"
