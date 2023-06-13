@@ -1,4 +1,4 @@
-~~# Check Point CloudGuard IaaS Single Gateway Terraform deployment for Azure
+# Check Point CloudGuard IaaS Single Gateway Terraform deployment for Azure
 
 This Terraform module deploys Check Point CloudGuard IaaS Single Gateway solution into a new Vnet in Azure.
 As part of the deployment the following resources are created:
@@ -130,7 +130,6 @@ This solution uses the following modules:
 
 
 ## Conditional creation
-```
 -  To enable CloudGuard metrics in order to send statuses and statistics collected from HA instances to the Azure Monitor service:
   ```
   enable_custom_metrics = true
@@ -172,8 +171,7 @@ In order to check the template version refer to the [sk116585](https://supportce
 | ---------------- | ------------- |
 
 
-
 ## License
 
-See the [LICENSE](../../LICENSE) file for details~~
+See the [LICENSE](../../LICENSE) file for details
 
