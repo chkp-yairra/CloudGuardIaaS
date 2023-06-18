@@ -136,6 +136,7 @@ variable "allow_upload_download" {
 variable "admin_shell" {
   description = "The admin shell to configure on machine or the first time"
   type = string
+  default = "/etc/cli.sh"
 }
 
 locals {
@@ -237,4 +238,8 @@ variable "client_secret" {
 variable "sicKey" {
   description = "sic key"
   type = string
+}
+
+resource "null_resource" "sic_key_invalid" {
+  count = length(var.sicKey) >= 12 ? 0 : "SIC key must be at least 12 characters long"
 }
