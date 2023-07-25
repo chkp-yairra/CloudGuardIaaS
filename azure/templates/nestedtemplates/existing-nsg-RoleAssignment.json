@@ -25,7 +25,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[concat('Microsoft.Network/networkSecurityGroups/', parameters('ExistingNSG').name)]",
-      "name": "[guid(yairra1)]",
+      "name": "[guid('yairra1')]",
       "properties": {
         "roleDefinitionId": "[parameters('roleDefinitionId')]",
         "principalId": "[parameters('principalId1')]"
@@ -35,7 +35,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[concat('Microsoft.Network/networkSecurityGroups/', parameters('ExistingNSG').name)]",
-      "name": "[guid(yairra2)]",
+      "name": "[guid('yairra2')]",
       "properties": {
         "roleDefinitionId": "[parameters('roleDefinitionId')]",
         "principalId": "[parameters('principalId2')]"
