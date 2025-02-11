@@ -58,7 +58,7 @@ locals {
       routing-intent-policies = var.routing-intent-internet-traffic == "yes" ? (var.routing-intent-private-traffic == "yes" ? tolist([local.routing_intent-internet-policy, local.routing_intent-private-policy]) : tolist([local.routing_intent-internet-policy])) : (var.routing-intent-private-traffic == "yes" ? tolist([local.routing_intent-private-policy]) : [])
       req_body = jsonencode({"properties": {"routingPolicies": local.routing-intent-policies}})
       req_url = "https://management.azure.com/subscriptions/${var.subscription_id}/resourceGroups/${var.vwan-hub-resource-group}/providers/Microsoft.Network/virtualHubs/${var.vwan-hub-name}/routingIntent/hubRoutingIntent?api-version=2022-01-01"
-      public_ip_resource_group = var.new-public-ip == "yes" ? azurerm_resource_group.managed-app-rg.name : "/subscriptions/${var.subscription_id}/resourceGroups/${split("/", var.existing-public-ip)[4]}"
+      public_ip_resource_group = "/subscriptions/${var.subscription_id}/resourceGroups/${var.new-public-ip == "yes" ? azurerm_resource_group.managed-app-rg.name : var.existing-public-ip != "" ? split("/", var.existing-public-ip)[4] : ""}"
 }
 
 //********************** Marketplace Terms & Solution Registration **************************//
